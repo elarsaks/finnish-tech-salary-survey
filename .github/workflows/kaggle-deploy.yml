@@ -6,11 +6,13 @@ on:
     paths:
       - "data/*.ipynb"
       - "data/.kaggle/**"
-  workflow_dispatch:  # Manual trigger from GitHub UI
+  workflow_dispatch: # Manual trigger from GitHub UI
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -24,11 +26,13 @@ jobs:
       - name: Install Kaggle CLI
         run: pip install kaggle
 
-      - name: Configure Kaggle credentials
+      - name: Debug credentials
         run: |
-          mkdir -p ~/.kaggle
-          echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_KEY }}"}' > ~/.kaggle/kaggle.json
-          chmod 600 ~/.kaggle/kaggle.json
+          echo "Token length: ${#KAGGLE_API_TOKEN}"
+          echo "Token first 5 chars: ${KAGGLE_API_TOKEN:0:5}"
+
+      - name: Test Kaggle credentials
+        run: kaggle kernels list --mine --page-size 1
 
       - name: Prepare and deploy Data Download notebook
         run: |
