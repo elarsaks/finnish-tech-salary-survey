@@ -2,7 +2,7 @@ name: Deploy to Kaggle
 
 on:
   push:
-    branches: [master]
+    branches: [deploy-to-kaggle]
     paths:
       - "data/*.ipynb"
       - "data/.kaggle/**"
