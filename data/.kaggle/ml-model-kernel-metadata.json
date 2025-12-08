@@ -9,7 +9,7 @@
     "enable_tpu": false,
     "enable_internet": true,
     "dataset_sources": [
-        "elarsaks/finnish-tech-salary-survey-2024-data"
+        "elarsaks/finnish-tech-salary-survey-2024-cleaned"
     ],
     "competition_sources": [],
     "kernel_sources": [],
