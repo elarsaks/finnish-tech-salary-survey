@@ -47,3 +47,10 @@ jobs:
           cp data/.kaggle/cleaning-kernel-metadata.json /tmp/kaggle-cleaning/kernel-metadata.json
           cp data/finnish-tech-salary-survey-2024-data-cleaning.ipynb /tmp/kaggle-cleaning/
           kaggle kernels push -p /tmp/kaggle-cleaning
+
+      - name: Prepare and deploy ML Model notebook
+        run: |
+          mkdir -p /tmp/kaggle-ml-model
+          cp data/.kaggle/ml-model-kernel-metadata.json /tmp/kaggle-ml-model/kernel-metadata.json
+          cp data/finnish-tech-salary-survey-2024-ml-model.ipynb /tmp/kaggle-ml-model/
+          kaggle kernels push -p /tmp/kaggle-ml-model
