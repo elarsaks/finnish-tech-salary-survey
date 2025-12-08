@@ -1,0 +1,17 @@
+{
+    "id": "elarsaks/finnish-tech-salary-survey-2024-data-cleaning",
+    "title": "Finnish Tech Salary Survey 2024 - Data Cleaning",
+    "code_file": "finnish-tech-salary-survey-2024-data-cleaning.ipynb",
+    "language": "python",
+    "kernel_type": "notebook",
+    "is_private": false,
+    "enable_gpu": false,
+    "enable_tpu": false,
+    "enable_internet": true,
+    "dataset_sources": [
+        "elarsaks/finnish-tech-salary-survey-2024-data"
+    ],
+    "competition_sources": [],
+    "kernel_sources": [],
+    "model_sources": []
+}

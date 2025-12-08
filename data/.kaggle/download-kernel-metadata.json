@@ -1,0 +1,15 @@
+{
+    "id": "elarsaks/finnish-tech-salary-survey-2024-data-download",
+    "title": "Finnish Tech Salary Survey 2024 - Data Download",
+    "code_file": "finnish-tech-salary-survey-2024-data-download.ipynb",
+    "language": "python",
+    "kernel_type": "notebook",
+    "is_private": false,
+    "enable_gpu": false,
+    "enable_tpu": false,
+    "enable_internet": true,
+    "dataset_sources": [],
+    "competition_sources": [],
+    "kernel_sources": [],
+    "model_sources": []
+}
