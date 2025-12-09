@@ -48,9 +48,9 @@ jobs:
           cp data/finnish-tech-salary-survey-2024-data-cleaning.ipynb /tmp/kaggle-cleaning/
           kaggle kernels push -p /tmp/kaggle-cleaning
 
-      - name: Prepare and deploy ML Model notebook
+      - name: Prepare and deploy Analytics notebook
         run: |
-          mkdir -p /tmp/kaggle-ml-model
-          cp data/.kaggle/ml-model-kernel-metadata.json /tmp/kaggle-ml-model/kernel-metadata.json
-          cp data/finnish-tech-salary-survey-2024-ml-model.ipynb /tmp/kaggle-ml-model/
-          kaggle kernels push -p /tmp/kaggle-ml-model
+          mkdir -p /tmp/kaggle-analytics
+          cp data/.kaggle/analytics-kernel-metadata.json /tmp/kaggle-analytics/kernel-metadata.json
+          cp data/finnish-tech-salary-survey-2024-analytics.ipynb /tmp/kaggle-analytics/
+          kaggle kernels push -p /tmp/kaggle-analytics
