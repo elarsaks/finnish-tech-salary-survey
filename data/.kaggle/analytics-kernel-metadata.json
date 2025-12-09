@@ -1,7 +1,7 @@
 {
-    "id": "elarsaks/finnish-tech-salary-survey-2024-ml-model",
-    "title": "Finnish Tech Salary Survey 2024 - ML Model",
-    "code_file": "finnish-tech-salary-survey-2024-ml-model.ipynb",
+    "id": "elarsaks/finnish-tech-salary-survey-2024-analytics",
+    "title": "Finnish Tech Salary Survey 2024 - Analytics",
+    "code_file": "finnish-tech-salary-survey-2024-analytics.ipynb",
     "language": "python",
     "kernel_type": "notebook",
     "is_private": true,
