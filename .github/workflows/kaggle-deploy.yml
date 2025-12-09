@@ -17,6 +17,44 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Need previous commit to detect changes
+
+      - name: Detect changed notebooks
+        id: changes
+        run: |
+          # For manual triggers, deploy all notebooks
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "download=true" >> $GITHUB_OUTPUT
+            echo "cleaning=true" >> $GITHUB_OUTPUT
+            echo "analytics=true" >> $GITHUB_OUTPUT
+            echo "Manual trigger - deploying all notebooks"
+            exit 0
+          fi
+
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Check each notebook
+          if echo "$CHANGED_FILES" | grep -q "finnish-tech-salary-survey-2024-data-download.ipynb\|download-kernel-metadata.json"; then
+            echo "download=true" >> $GITHUB_OUTPUT
+          else
+            echo "download=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "finnish-tech-salary-survey-2024-data-cleaning.ipynb\|cleaning-kernel-metadata.json"; then
+            echo "cleaning=true" >> $GITHUB_OUTPUT
+          else
+            echo "cleaning=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "finnish-tech-salary-survey-2024-data-analytics.ipynb\|analytics-kernel-metadata.json"; then
+            echo "analytics=true" >> $GITHUB_OUTPUT
+          else
+            echo "analytics=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,31 +64,39 @@ jobs:
       - name: Install Kaggle CLI
         run: pip install kaggle
 
-      - name: Debug credentials
-        run: |
-          echo "Token length: ${#KAGGLE_API_TOKEN}"
-          echo "Token first 5 chars: ${KAGGLE_API_TOKEN:0:5}"
-
       - name: Test Kaggle credentials
         run: kaggle kernels list --mine --page-size 1
 
       - name: Prepare and deploy Data Download notebook
+        if: steps.changes.outputs.download == 'true'
         run: |
+          echo "Deploying Data Download notebook..."
           mkdir -p /tmp/kaggle-download
           cp data/.kaggle/download-kernel-metadata.json /tmp/kaggle-download/kernel-metadata.json
           cp data/finnish-tech-salary-survey-2024-data-download.ipynb /tmp/kaggle-download/
           kaggle kernels push -p /tmp/kaggle-download
 
       - name: Prepare and deploy Data Cleaning notebook
+        if: steps.changes.outputs.cleaning == 'true'
         run: |
+          echo "Deploying Data Cleaning notebook..."
           mkdir -p /tmp/kaggle-cleaning
           cp data/.kaggle/cleaning-kernel-metadata.json /tmp/kaggle-cleaning/kernel-metadata.json
           cp data/finnish-tech-salary-survey-2024-data-cleaning.ipynb /tmp/kaggle-cleaning/
           kaggle kernels push -p /tmp/kaggle-cleaning
 
       - name: Prepare and deploy Analytics notebook
+        if: steps.changes.outputs.analytics == 'true'
         run: |
+          echo "Deploying Analytics notebook..."
           mkdir -p /tmp/kaggle-analytics
           cp data/.kaggle/analytics-kernel-metadata.json /tmp/kaggle-analytics/kernel-metadata.json
-          cp data/finnish-tech-salary-survey-2024-analytics.ipynb /tmp/kaggle-analytics/
+          cp data/finnish-tech-salary-survey-2024-data-analytics.ipynb /tmp/kaggle-analytics/
           kaggle kernels push -p /tmp/kaggle-analytics
+
+      - name: Summary
+        run: |
+          echo "Deployment summary:"
+          echo "  Download notebook: ${{ steps.changes.outputs.download }}"
+          echo "  Cleaning notebook: ${{ steps.changes.outputs.cleaning }}"
+          echo "  Analytics notebook: ${{ steps.changes.outputs.analytics }}"
