@@ -6,3 +6,9 @@
 
 # Python virtual environment
 .venv/
+
+# Node modules
+node_modules/
+
+# Client build artifacts
+client/dist/
