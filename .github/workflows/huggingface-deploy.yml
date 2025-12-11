@@ -1,0 +1,160 @@
+name: Deploy Model to Hugging Face
+
+on:
+  push:
+    branches: [deploy-model-to-huggingface]
+    paths:
+      - "data/models/**"
+  workflow_dispatch: # Manual trigger from GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Hugging Face Hub
+        run: pip install huggingface_hub
+
+      - name: Verify HF credentials
+        run: |
+          python -c "from huggingface_hub import whoami; print(whoami())"
+
+      - name: Upload model to Hugging Face
+        run: |
+          python << 'EOF'
+          import os
+          import json
+          from huggingface_hub import HfApi, create_repo
+
+          # Configuration
+          repo_id = "elarsaks/finnish-tech-salary-predictor"
+          model_dir = "data/models"
+
+          # Initialize API
+          api = HfApi()
+
+          # Create repo if it doesn't exist
+          try:
+              create_repo(repo_id, repo_type="model", exist_ok=True)
+              print(f"Repository '{repo_id}' is ready")
+          except Exception as e:
+              print(f"Note: {e}")
+
+          # Upload ONNX model
+          onnx_file = os.path.join(model_dir, "salary_predictor_v1.0.0.onnx")
+          if os.path.exists(onnx_file):
+              api.upload_file(
+                  path_or_fileobj=onnx_file,
+                  path_in_repo="salary_predictor_v1.0.0.onnx",
+                  repo_id=repo_id,
+                  repo_type="model"
+              )
+              print(f"Uploaded: {onnx_file}")
+
+          # Upload metadata
+          metadata_file = os.path.join(model_dir, "salary_predictor_v1.0.0_metadata.json")
+          if os.path.exists(metadata_file):
+              api.upload_file(
+                  path_or_fileobj=metadata_file,
+                  path_in_repo="salary_predictor_v1.0.0_metadata.json",
+                  repo_id=repo_id,
+                  repo_type="model"
+              )
+              print(f"Uploaded: {metadata_file}")
+
+          # Create and upload README
+          with open(metadata_file, 'r') as f:
+              metadata = json.load(f)
+
+          readme_content = f"""---
+          license: mit
+          tags:
+            - salary-prediction
+            - finnish-tech
+            - onnx
+            - regression
+          ---
+
+          # Finnish Tech Salary Predictor
+
+          This model predicts salaries for tech professionals in Finland based on various features.
+
+          ## Model Details
+
+          - **Model Type**: {metadata.get('model_type', 'Ridge Regression')}
+          - **Version**: {metadata.get('version', 'v1.0.0')}
+          - **Created**: {metadata.get('created_at', 'N/A')}
+          - **Format**: ONNX
+
+          ## Features
+
+          The model uses the following input features:
+          - Experience years
+          - Office time percentage
+          - Age group
+          - Gender
+          - Company type
+          - Role group
+          - Education level
+          - Location (region)
+
+          ## Usage
+
+          ```python
+          import onnxruntime as ort
+          import numpy as np
+
+          # Load the model
+          session = ort.InferenceSession("salary_predictor_v1.0.0.onnx")
+
+          # Prepare input (example)
+          input_name = session.get_inputs()[0].name
+          input_data = np.array([[...]], dtype=np.float32)  # Your feature vector
+
+          # Run inference
+          result = session.run(None, {{input_name: input_data}})
+          predicted_salary = result[0]
+          ```
+
+          ## Data Source
+
+          Based on the [Koodiklinikka Finnish Tech Salary Survey 2024](https://koodiklinikka.fi/palkkatutkimus/).
+
+          ## License
+
+          MIT License
+          """
+
+          # Clean up indentation
+          readme_content = "\\n".join(line.lstrip() for line in readme_content.split("\\n"))
+
+          with open("/tmp/README.md", "w") as f:
+              f.write(readme_content)
+
+          api.upload_file(
+              path_or_fileobj="/tmp/README.md",
+              path_in_repo="README.md",
+              repo_id=repo_id,
+              repo_type="model"
+          )
+          print("Uploaded: README.md")
+
+          print(f"\\n✅ Model successfully deployed to: https://huggingface.co/{repo_id}")
+          EOF
+
+      - name: Summary
+        run: |
+          echo "✅ Deployment complete!"
+          echo "Model repository: https://huggingface.co/elarsaks/finnish-tech-salary-predictor"
