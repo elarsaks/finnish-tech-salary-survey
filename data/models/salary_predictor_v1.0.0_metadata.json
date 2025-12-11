@@ -1,7 +1,7 @@
 {
   "model_name": "Finnish Tech Salary Predictor",
   "version": "v1.0.0",
-  "created_at": "2025-12-10T19:54:30.320618",
+  "created_at": "2025-12-11T07:12:23.253678",
   "model_type": "Ridge Regression",
   "features": [
     "experience_years",
@@ -58,5 +58,17 @@
   },
   "training_samples": 431,
   "test_samples": 108,
-  "dataset": "koodiklinikka_salary_survey_2024_cleaned.csv"
+  "dataset": "koodiklinikka_salary_survey_2024_cleaned.csv",
+  "onnx_opset": 15,
+  "input_name": "float_input",
+  "input_shape": [
+    null,
+    45
+  ],
+  "output_name": "variable",
+  "usage_example": {
+    "description": "Use with onnxruntime-web in React/JavaScript",
+    "npm_package": "onnxruntime-web",
+    "code_example": "\nimport * as ort from 'onnxruntime-web';\n\n// Load the model\nconst session = await ort.InferenceSession.create('/salary_predictor_v1.0.0.onnx');\n\n// Prepare input (array of feature values in the same order as metadata.features)\nconst inputData = new Float32Array([/* your 45 feature values */]);\nconst tensor = new ort.Tensor('float32', inputData, [1, 45]);\n\n// Run inference\nconst results = await session.run({ float_input: tensor });\nconst prediction = results.variable.data[0];\nconsole.log('Predicted salary:', prediction);\n"
+  }
 }
