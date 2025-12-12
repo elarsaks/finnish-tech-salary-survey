@@ -6,48 +6,41 @@ const FEATURE_ORDER = [
   "experience_years",
   "office_time_percent",
   "source_language_fi",
-  "age_21-25",
-  "age_26-30",
-  "age_31-35",
-  "age_36-40",
-  "age_41-45",
-  "age_46-50",
-  "age_51-55",
-  "age_> 55v",
+  "age_21_25",
+  "age_26_30",
+  "age_31_35",
+  "age_36_40",
+  "age_41_45",
+  "age_46_50",
+  "age_51_55",
+  "age_55_plus",
   "age_unknown",
   "gender_male",
   "gender_other",
   "gender_unknown",
-  "company_type_consulting",
-  "company_type_digitoimisto",
-  "company_type_henkilöstövuokraus (aka konsulttitalo)",
-  "company_type_julkinen tai kolmas sektori",
-  "company_type_konsulttitalo, jolla on omaa tuotebisnestä",
-  "company_type_konsulttitalossa",
-  "company_type_mainostoimisto",
-  "company_type_oma softa, oma rauta ja niiden yhteispeli, ei toista ilman toista",
-  "company_type_product company with software as their core business",
-  "company_type_tuotetalossa, jonka core-bisnes on softa",
-  "company_type_unknown",
-  "company_type_ylläpitotalossa",
-  "company_type_yrityksessä, jossa softa on tukeva toiminto (esim pankit, terveysala, yms)",
-  "role_group_data / ml / analytics",
-  "role_group_design / ux",
-  "role_group_devops / infrastructure",
-  "role_group_junior developer",
-  "role_group_lead developer",
-  "role_group_management / leadership",
+  "company_type_en_consulting",
+  "company_type_en_enterprise",
+  "company_type_en_maintenance",
+  "company_type_en_product_company",
+  "company_type_en_public_sector",
+  "company_type_en_unknown",
+  "role_group_data_ml_analytics",
+  "role_group_design_ux",
+  "role_group_devops_infrastructure",
+  "role_group_junior_developer",
+  "role_group_lead_developer",
+  "role_group_management_leadership",
   "role_group_other",
-  "role_group_product / project",
-  "role_group_senior developer",
-  "role_group_software developer / engineer",
+  "role_group_product_project",
+  "role_group_senior_developer",
+  "role_group_software_developer_engineer",
   "education_level_master",
   "education_level_other",
   "education_level_phd",
-  "education_level_secondary or less",
+  "education_level_secondary_or_less",
   "education_level_unknown",
   "education_level_vocational",
-  "location_category_rest of finland",
+  "location_category_rest_of_finland",
 ];
 
 let session: ort.InferenceSession | null = null;
@@ -67,7 +60,7 @@ export async function loadModel(): Promise<void> {
 }
 
 export function encodeFormData(formData: SalaryFormData): Float32Array {
-  const features = new Float32Array(45);
+  const features = new Float32Array(FEATURE_ORDER.length);
 
   // Initialize all features to 0
   features.fill(0);
@@ -82,16 +75,16 @@ export function encodeFormData(formData: SalaryFormData): Float32Array {
   // Source language (one-hot: only fi is encoded, en is the reference)
   featureMap["source_language_fi"] = formData.sourceLanguage === "fi" ? 1 : 0;
 
-  // Age (one-hot encoding, 21-25 is reference/dropped)
+  // Age (one-hot encoding, 21_25 is reference/dropped)
   const ageFeatures = [
-    "21-25",
-    "26-30",
-    "31-35",
-    "36-40",
-    "41-45",
-    "46-50",
-    "51-55",
-    "> 55v",
+    "21_25",
+    "26_30",
+    "31_35",
+    "36_40",
+    "41_45",
+    "46_50",
+    "51_55",
+    "55_plus",
     "unknown",
   ];
   ageFeatures.forEach((age) => {
@@ -106,35 +99,29 @@ export function encodeFormData(formData: SalaryFormData): Float32Array {
   // Company type (one-hot encoding)
   const companyTypes = [
     "consulting",
-    "digitoimisto",
-    "henkilöstövuokraus (aka konsulttitalo)",
-    "julkinen tai kolmas sektori",
-    "konsulttitalo, jolla on omaa tuotebisnestä",
-    "konsulttitalossa",
-    "mainostoimisto",
-    "oma softa, oma rauta ja niiden yhteispeli, ei toista ilman toista",
-    "product company with software as their core business",
-    "tuotetalossa, jonka core-bisnes on softa",
+    "enterprise",
+    "maintenance",
+    "product_company",
+    "public_sector",
     "unknown",
-    "ylläpitotalossa",
-    "yrityksessä, jossa softa on tukeva toiminto (esim pankit, terveysala, yms)",
   ];
   companyTypes.forEach((type) => {
-    featureMap[`company_type_${type}`] = formData.companyType === type ? 1 : 0;
+    featureMap[`company_type_en_${type}`] =
+      formData.companyType === type ? 1 : 0;
   });
 
   // Role group (one-hot encoding)
   const roleGroups = [
-    "data / ml / analytics",
-    "design / ux",
-    "devops / infrastructure",
-    "junior developer",
-    "lead developer",
-    "management / leadership",
+    "data_ml_analytics",
+    "design_ux",
+    "devops_infrastructure",
+    "junior_developer",
+    "lead_developer",
+    "management_leadership",
     "other",
-    "product / project",
-    "senior developer",
-    "software developer / engineer",
+    "product_project",
+    "senior_developer",
+    "software_developer_engineer",
   ];
   roleGroups.forEach((role) => {
     featureMap[`role_group_${role}`] = formData.roleGroup === role ? 1 : 0;
@@ -145,7 +132,7 @@ export function encodeFormData(formData: SalaryFormData): Float32Array {
     "master",
     "other",
     "phd",
-    "secondary or less",
+    "secondary_or_less",
     "unknown",
     "vocational",
   ];
@@ -154,9 +141,9 @@ export function encodeFormData(formData: SalaryFormData): Float32Array {
       formData.educationLevel === level ? 1 : 0;
   });
 
-  // Location category (one-hot encoding, capital region is reference/dropped)
-  featureMap["location_category_rest of finland"] =
-    formData.locationCategory === "rest of finland" ? 1 : 0;
+  // Location category (one-hot encoding, capital_region is reference/dropped)
+  featureMap["location_category_rest_of_finland"] =
+    formData.locationCategory === "rest_of_finland" ? 1 : 0;
 
   // Map features to the correct order
   FEATURE_ORDER.forEach((featureName, index) => {
@@ -176,7 +163,10 @@ export async function predictSalary(formData: SalaryFormData): Promise<number> {
   }
 
   const inputData = encodeFormData(formData);
-  const tensor = new ort.Tensor("float32", inputData, [1, 45]);
+  const tensor = new ort.Tensor("float32", inputData, [
+    1,
+    FEATURE_ORDER.length,
+  ]);
 
   const results = await session.run({ float_input: tensor });
   const prediction = results.variable.data[0] as number;
