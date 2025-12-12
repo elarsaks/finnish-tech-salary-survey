@@ -53,7 +53,10 @@ export async function loadModel(): Promise<void> {
   // Disable multi-threading to avoid SharedArrayBuffer issues
   ort.env.wasm.numThreads = 1;
 
-  session = await ort.InferenceSession.create("/salary_predictor_v1.0.0.onnx", {
+  // Use BASE_URL for GitHub Pages compatibility
+  const modelPath = `${import.meta.env.BASE_URL}salary_predictor_v1.0.0.onnx`;
+  
+  session = await ort.InferenceSession.create(modelPath, {
     executionProviders: ["wasm"],
   });
 }
