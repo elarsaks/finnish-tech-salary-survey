@@ -55,7 +55,7 @@ export async function loadModel(): Promise<void> {
 
   // Use BASE_URL for GitHub Pages compatibility
   const modelPath = `${import.meta.env.BASE_URL}salary_predictor_v1.0.0.onnx`;
-  
+
   session = await ort.InferenceSession.create(modelPath, {
     executionProviders: ["wasm"],
   });
