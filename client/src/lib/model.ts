@@ -6,7 +6,6 @@ const FEATURE_ORDER = [
   "experience_years",
   "office_time_percent",
   "source_language_fi",
-  "age_21_25",
   "age_26_30",
   "age_31_35",
   "age_36_40",
@@ -77,7 +76,6 @@ export function encodeFormData(formData: SalaryFormData): Float32Array {
 
   // Age (one-hot encoding, 21_25 is reference/dropped)
   const ageFeatures = [
-    "21_25",
     "26_30",
     "31_35",
     "36_40",
@@ -163,6 +161,10 @@ export async function predictSalary(formData: SalaryFormData): Promise<number> {
   }
 
   const inputData = encodeFormData(formData);
+  console.log("Input data length:", inputData.length);
+  console.log("Expected features:", FEATURE_ORDER.length);
+  console.log("Form data:", formData);
+  
   const tensor = new ort.Tensor("float32", inputData, [
     1,
     FEATURE_ORDER.length,

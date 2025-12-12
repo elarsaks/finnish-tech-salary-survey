@@ -257,7 +257,9 @@ export function SalaryPredictor() {
       const result = await predictSalary(formData);
       setPrediction(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Prediction failed");
+      setError(
+        err instanceof Error ? err.message : "Prediction failed: " + String(err)
+      );
     } finally {
       setLoading(false);
     }
