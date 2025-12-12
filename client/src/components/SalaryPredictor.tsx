@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
-  SalaryFormData,
-  DEFAULT_FORM_DATA,
   AGE_OPTIONS,
-  GENDER_OPTIONS,
   COMPANY_TYPE_OPTIONS,
-  ROLE_GROUP_OPTIONS,
+  DEFAULT_FORM_DATA,
   EDUCATION_LEVEL_OPTIONS,
+  GENDER_OPTIONS,
   LOCATION_OPTIONS,
+  ROLE_GROUP_OPTIONS,
   SOURCE_LANGUAGE_OPTIONS,
-} from "./types";
-import { predictSalary, loadModel } from "./model";
+  type SalaryFormData,
+} from "../lib/types";
+import { loadModel, predictSalary } from "../lib/model";
+
+// ============================================================================
+// Styled Components
+// ============================================================================
 
 const Container = styled.div`
   max-width: 800px;
@@ -184,6 +188,43 @@ const Footer = styled.footer`
   }
 `;
 
+// ============================================================================
+// Reusable Form Components
+// ============================================================================
+
+interface SelectFieldProps {
+  id: string;
+  label: string;
+  value: string;
+  options: readonly { value: string; label: string }[];
+  onChange: (value: string) => void;
+}
+
+function SelectField({
+  id,
+  label,
+  value,
+  options,
+  onChange,
+}: SelectFieldProps) {
+  return (
+    <FormGroup>
+      <label htmlFor={id}>{label}</label>
+      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </FormGroup>
+  );
+}
+
+// ============================================================================
+// Main Component
+// ============================================================================
+
 export function SalaryPredictor() {
   const [formData, setFormData] = useState<SalaryFormData>(DEFAULT_FORM_DATA);
   const [prediction, setPrediction] = useState<number | null>(null);
@@ -191,12 +232,14 @@ export function SalaryPredictor() {
   const [error, setError] = useState<string | null>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
 
-  // Load model on mount
-  useState(() => {
+  useEffect(() => {
     loadModel()
       .then(() => setModelLoaded(true))
-      .catch((err) => setError(`Failed to load model: ${err.message}`));
-  });
+      .catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        setError(`Failed to load model: ${message}`);
+      });
+  }, []);
 
   const handleChange = (
     field: keyof SalaryFormData,
@@ -263,118 +306,69 @@ export function SalaryPredictor() {
             <RangeValue>{formData.officeTimePercent}%</RangeValue>
           </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="sourceLanguage">Survey Language</label>
-            <select
-              id="sourceLanguage"
-              value={formData.sourceLanguage}
-              onChange={(e) => handleChange("sourceLanguage", e.target.value)}
-            >
-              {SOURCE_LANGUAGE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </FormGroup>
+          <SelectField
+            id="sourceLanguage"
+            label="Survey Language"
+            value={formData.sourceLanguage}
+            options={SOURCE_LANGUAGE_OPTIONS}
+            onChange={(v) => handleChange("sourceLanguage", v)}
+          />
         </FormSection>
 
         <FormSection>
           <h2>Personal Information</h2>
 
-          <FormGroup>
-            <label htmlFor="age">Age Group</label>
-            <select
-              id="age"
-              value={formData.age}
-              onChange={(e) => handleChange("age", e.target.value)}
-            >
-              {AGE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </FormGroup>
+          <SelectField
+            id="age"
+            label="Age Group"
+            value={formData.age}
+            options={AGE_OPTIONS}
+            onChange={(v) => handleChange("age", v)}
+          />
 
-          <FormGroup>
-            <label htmlFor="gender">Gender</label>
-            <select
-              id="gender"
-              value={formData.gender}
-              onChange={(e) => handleChange("gender", e.target.value)}
-            >
-              {GENDER_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </FormGroup>
+          <SelectField
+            id="gender"
+            label="Gender"
+            value={formData.gender}
+            options={GENDER_OPTIONS}
+            onChange={(v) => handleChange("gender", v)}
+          />
 
-          <FormGroup>
-            <label htmlFor="educationLevel">Education Level</label>
-            <select
-              id="educationLevel"
-              value={formData.educationLevel}
-              onChange={(e) => handleChange("educationLevel", e.target.value)}
-            >
-              {EDUCATION_LEVEL_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </FormGroup>
+          <SelectField
+            id="educationLevel"
+            label="Education Level"
+            value={formData.educationLevel}
+            options={EDUCATION_LEVEL_OPTIONS}
+            onChange={(v) => handleChange("educationLevel", v)}
+          />
         </FormSection>
 
         <FormSection>
           <h2>Work Details</h2>
 
-          <FormGroup>
-            <label htmlFor="roleGroup">Role</label>
-            <select
-              id="roleGroup"
-              value={formData.roleGroup}
-              onChange={(e) => handleChange("roleGroup", e.target.value)}
-            >
-              {ROLE_GROUP_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </FormGroup>
+          <SelectField
+            id="roleGroup"
+            label="Role"
+            value={formData.roleGroup}
+            options={ROLE_GROUP_OPTIONS}
+            onChange={(v) => handleChange("roleGroup", v)}
+          />
 
-          <FormGroup>
-            <label htmlFor="companyType">Company Type</label>
-            <select
-              id="companyType"
-              value={formData.companyType}
-              onChange={(e) => handleChange("companyType", e.target.value)}
-            >
-              {COMPANY_TYPE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </FormGroup>
+          <SelectField
+            id="companyType"
+            label="Company Type"
+            value={formData.companyType}
+            options={COMPANY_TYPE_OPTIONS}
+            onChange={(v) => handleChange("companyType", v)}
+          />
 
-          <FormGroup>
-            <label htmlFor="locationCategory">Location</label>
-            <select
-              id="locationCategory"
-              value={formData.locationCategory}
-              onChange={(e) => handleChange("locationCategory", e.target.value)}
-            >
-              {LOCATION_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </FormGroup>
+          <SelectField
+            id="locationCategory"
+            label="Location"
+            value={formData.locationCategory}
+            options={LOCATION_OPTIONS}
+            onChange={(v) => handleChange("locationCategory", v)}
+          />
         </FormSection>
 
         <SubmitButton type="submit" disabled={loading || !modelLoaded}>

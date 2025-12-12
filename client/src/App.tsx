@@ -1,4 +1,4 @@
-import { SalaryPredictor } from "./SalaryPredictor";
+import { SalaryPredictor } from "./components/SalaryPredictor";
 
 function App() {
   return <SalaryPredictor />;
