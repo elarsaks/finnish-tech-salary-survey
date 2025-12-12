@@ -494,7 +494,7 @@ export function SalaryPredictor() {
           <strong>📊 Data Lineage & Methodology:</strong>
           <br />
           <a
-            href="https://github.com/elarsaks/finnish-tech-salary-survey/blob/master/data/finnish-tech-salary-survey-2024-data-cleaning.ipynb"
+            href="https://www.kaggle.com/code/elarsaks/finnish-tech-salary-survey-2024-data-cleaning"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -502,7 +502,7 @@ export function SalaryPredictor() {
           </a>
           {" | "}
           <a
-            href="https://github.com/elarsaks/finnish-tech-salary-survey/blob/master/data/finnish-tech-salary-survey-2024-data-analytics.ipynb"
+            href="https://www.kaggle.com/code/elarsaks/finnish-tech-salary-survey-2024-data-analytics"
             target="_blank"
             rel="noopener noreferrer"
           >
