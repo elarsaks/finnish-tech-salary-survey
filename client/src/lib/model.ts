@@ -164,7 +164,7 @@ export async function predictSalary(formData: SalaryFormData): Promise<number> {
   console.log("Input data length:", inputData.length);
   console.log("Expected features:", FEATURE_ORDER.length);
   console.log("Form data:", formData);
-  
+
   const tensor = new ort.Tensor("float32", inputData, [
     1,
     FEATURE_ORDER.length,

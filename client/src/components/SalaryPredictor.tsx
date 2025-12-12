@@ -43,6 +43,35 @@ const Header = styled.header`
     color: #666;
     font-size: 1.1rem;
   }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+`;
+
+const DisclaimerBox = styled.div`
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #856404;
+  text-align: center;
+
+  a {
+    color: #856404;
+    font-weight: 500;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
 `;
 
 const Form = styled.form`
@@ -176,7 +205,8 @@ const Footer = styled.footer`
   margin-top: 2rem;
   text-align: center;
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
 
   a {
     color: #007bff;
@@ -185,6 +215,27 @@ const Footer = styled.footer`
 
   a:hover {
     text-decoration: underline;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .disclaimer {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  .section {
+    margin-bottom: 0.75rem;
   }
 `;
 
@@ -270,10 +321,31 @@ export function SalaryPredictor() {
       <Header>
         <h1>🇫🇮 Finnish Tech Salary Predictor</h1>
         <p>
-          Estimate your monthly salary based on the 2024 Koodiklinikka Salary
-          Survey data
+          Estimate your monthly salary based on the{" "}
+          <a
+            href="https://koodiklinikka.github.io/palkkakysely/2024"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            2024 Koodiklinikka Salary Survey
+          </a>{" "}
+          data
         </p>
       </Header>
+
+      <DisclaimerBox>
+        ⚠️ <strong>School Project Disclaimer:</strong> This is an educational
+        assignment with no affiliation to{" "}
+        <a
+          href="https://koodiklinikka.fi"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Koodiklinikka
+        </a>
+        . Predictions are estimates and should not be used for salary
+        negotiations.
+      </DisclaimerBox>
 
       <Form onSubmit={handleSubmit}>
         <FormSection>
@@ -401,17 +473,50 @@ export function SalaryPredictor() {
       )}
 
       <Footer>
-        <p>
-          Data source:{" "}
+        <div className="links">
           <a
-            href="https://koodiklinikka.github.io/palkkakysely/2024"
+            href="https://koodiklinikka.fi"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Koodiklinikka Salary Survey 2024
+            🔗 Koodiklinikka
           </a>
-        </p>
-        <p>Model R² score: 0.31 (explains ~31% of salary variance)</p>
+          <a
+            href="https://github.com/elarsaks/finnish-tech-salary-survey"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📦 GitHub Repository
+          </a>
+        </div>
+
+        <div className="section">
+          <strong>📊 Data Lineage & Methodology:</strong>
+          <br />
+          <a
+            href="https://github.com/elarsaks/finnish-tech-salary-survey/blob/master/data/finnish-tech-salary-survey-2024-data-cleaning.ipynb"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Data Cleaning Notebook
+          </a>
+          {" | "}
+          <a
+            href="https://github.com/elarsaks/finnish-tech-salary-survey/blob/master/data/finnish-tech-salary-survey-2024-data-analytics.ipynb"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Model Training Notebook
+          </a>
+        </div>
+
+        <div className="section">
+          <strong>📈 Model Performance:</strong> R² = 0.44 | MAE = €834
+          <br />
+          <small>
+            Based on 532 survey responses from Finnish tech professionals
+          </small>
+        </div>
       </Footer>
     </Container>
   );
