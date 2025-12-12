@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://elarsaks.github.io/finnish-tech-salary-survey/",
   "scripts": {
     "copy-model": "cp ../data/models/salary_predictor_v1.0.0.onnx public/ && cp ../data/models/salary_predictor_v1.0.0_metadata.json public/",
     "dev": "vite",
-    "build": "npm run copy-model && tsc -b && vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - deploy-to-gh-pages
+
+jobs:
+  deploy-react-to-gh-pages:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository content
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      # Install dependencies
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm ci
+
+      # Copy model files from data to client
+      - name: Copy model files
+        run: |
+          cp data/models/salary_predictor_v1.0.0.onnx client/public/
+          cp data/models/salary_predictor_v1.0.0_metadata.json client/public/
+
+      # Build the React app
+      - name: Build
+        working-directory: ./client
+        run: npm run build
+
+      # Deploy to GitHub Pages
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./client/dist
